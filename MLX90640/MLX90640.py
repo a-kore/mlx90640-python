@@ -757,54 +757,6 @@ class MLX90640:
         return frameData
     
 
-    def GetFrameData(self):
-
-        frame = [0,0]
-        t_start = time.time()
-        sub_cnt = 0
-
-        ctrl_reg = self.getRegf(0x800D) 
-        self.setRegf(0x8000, ctrl_reg ^ (1 << 3)) #set new data flag to 0
-        new_data_flag = 0
-        while(sub_cnt < 2):
-
-            stat_reg = self.getRegf(0x8000) # status register
-            ctrl_reg = self.getRegf(0x800D)
-            new_data_flag = (stat_reg & 0x0008) >> 3 # flag for new data in RAM inside status register
-            subpage = (stat_reg & 0x0001) # current subpage
-            if new_data_flag == 1 and subpage == sub_cnt: # if flag is 1, there new data ready to read in RAM
-    #             print(subpage, new_data_flag)
-
-                self.setRegf(0x8000, ctrl_reg ^ (1 << 3)) #set new data flag to 0
-                new_data_flag = 0
-
-
-                frame[sub_cnt] = self.getRegs(0x0400,832) # read subpage from RAM
-
-                frame[sub_cnt].append(ctrl_reg)
-                frame[sub_cnt].append(stat_reg & 0x0001)            
-
-
-    #             self.setRegf(0x8000, ctrl_reg ^ (1 << 3)) #set new data flag to 0
-                frame[sub_cnt] = self.InterpolateOutliers(frame[sub_cnt])
-
-
-                frame[sub_cnt] = CalculateTo(frame[sub_cnt], 0.95)
-                frame[sub_cnt] = self.BadPixelsCorrection(self.brokenPixels, frame[sub_cnt], 1 )
-                frame[sub_cnt] = self.BadPixelsCorrection(self.outlierPixels, frame[sub_cnt], 1 )
-
-                sub_cnt += 1
-
-
-            t_end = time.time()
-            t_elapsed = t_end - t_start
-
-            if t_elapsed > 5:
-                print('frameData timeout error waiting for dataReady')
-                break
-
-
-        return frame
     
     def GetVDD(self, frame):
 
