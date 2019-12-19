@@ -413,7 +413,7 @@ class MLX90640:
         
         ilChessSP[2] = (self.eeData[53] & 0xF800) >> 11
         if (ilChessSP[2] > 15):
-            ilChessSP[2] = illChessSP[2] - 32
+            ilChessSP[2] = ilChessSP[2] - 32
         ilChessSP[2] = ilChessSP[2] / 8.0
         
         self.calibrationModeEE = calibrationModeEE
@@ -682,7 +682,7 @@ class MLX90640:
                     ap[1] = to[pixels[pix]-31];
                     ap[2] = to[pixels[pix]+31];
                     ap[3] = to[pixels[pix]+33];
-                    to[pixels[pix]] = GetMedian(ap,4)
+                    to[pixels[pix]] = self.GetMedian(ap,4)
                                    
             
             else:
