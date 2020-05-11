@@ -766,7 +766,7 @@ class MLX90640:
 
         resolutionRAM = (frame[832] & 0x0c00) >> 10
         resolutionCorrection = pow(2, self.resolutionEE) / pow(2, resolutionRAM)
-        vdd = (resolutionCorrection * vdd - self.vdd25) / (self.kVdd + 3.3)
+        vdd = (resolutionCorrection * vdd - self.vdd25) / (self.kVdd) + 3.3
 
         return vdd
 
